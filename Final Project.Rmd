@@ -7,4 +7,156 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(rvest)
+library(dplyr)
+library(readr)
+library(ggplot2)
+library(tidyr)
+knitr::opts_chunk$set(echo = FALSE)
+library(trackdown)
 ```
+
+##Read In Data
+```{r}
+MLBStats <- read_html(
+  x = "https://www.espn.com/mlb/standings"
+) %>%
+  html_elements(css = "table") %>%
+  html_table()
+
+View(MLBStats)
+```
+
+
+
+
+
+##All American Playoff Teams
+```{r}
+AmericanPlayoffTeams <- bind_cols(MLBStats[[1]], MLBStats[[2]])
+AmericanPlayoffTeams <- AmericanPlayoffTeams[, -c(2:3)]
+AmericanPlayoffTeams <- AmericanPlayoffTeams[, -c(3:5)]
+AmericanPlayoffTeams <- AmericanPlayoffTeams[, -c(5:8)]
+AmericanPlayoffTeams <- AmericanPlayoffTeams[-c(1,5:7,9:13,16:18),]
+names(AmericanPlayoffTeams)[names(AmericanPlayoffTeams) == "X1...1"] <- "American League Playoff Teams"
+names(AmericanPlayoffTeams)[names(AmericanPlayoffTeams) == "X3"] <- "PCT(Win Rate)"
+names(AmericanPlayoffTeams)[names(AmericanPlayoffTeams) == "X7"] <- "RS(Runs Scored)"
+names(AmericanPlayoffTeams)[names(AmericanPlayoffTeams) == "X8"] <- "RA(Runs Allowed)"
+AmericanPlayoffTeams[1,1] = "New York Yankees"
+AmericanPlayoffTeams[2,1] = "Toronto Blue Jays"
+AmericanPlayoffTeams[3,1] = "Tampa Bay Rays"
+AmericanPlayoffTeams[4,1] = "Cleveland Guardians"
+AmericanPlayoffTeams[5,1] = "Houston Astros"
+AmericanPlayoffTeams[6,1] = "Seattle Mariners"
+View(AmericanPlayoffTeams)
+
+```
+
+##All National Playoff Teams
+```{r}
+NationalPlayoffTeams <-  bind_cols(MLBStats[[3]], MLBStats[[4]])
+NationalPlayoffTeams <- NationalPlayoffTeams[, -c(2:3)]
+NationalPlayoffTeams <- NationalPlayoffTeams[, -c(3:5)]
+NationalPlayoffTeams <- NationalPlayoffTeams[, -c(5:8)]
+NationalPlayoffTeams <- NationalPlayoffTeams[-c(1,5:7,9:13,16:18),]
+names(NationalPlayoffTeams)[names(NationalPlayoffTeams) == "X1...1"] <- "National League Playoff Teams"
+names(NationalPlayoffTeams)[names(NationalPlayoffTeams) == "X3"] <- "PCT(Win Rate)"
+names(NationalPlayoffTeams)[names(NationalPlayoffTeams) == "X7"] <- "RS(Runs Scored)"
+names(NationalPlayoffTeams)[names(NationalPlayoffTeams) == "X8"] <- "RA(Runs Allowed)"
+NationalPlayoffTeams[1,1] = "Atlanta Braves"
+NationalPlayoffTeams[2,1] = "New York Mets"
+NationalPlayoffTeams[3,1] = "Philadelphia Phillies"
+NationalPlayoffTeams[4,1] = "St. Louis Cardinals"
+NationalPlayoffTeams[5,1] = "Los Angeles Dodgers"
+NationalPlayoffTeams[6,1] = "San Diego Padres"
+View(NationalPlayoffTeams)
+```
+
+
+##All Playoff Teams
+```{r}
+AmericanLeagueCombine <- AmericanPlayoffTeams
+NationalLeagueCombine <- NationalPlayoffTeams
+
+names(AmericanLeagueCombine)[names(AmericanLeagueCombine) == "American League Playoff Teams"] <- "Playoff Teams"
+names(NationalLeagueCombine)[names(NationalLeagueCombine) == "National League Playoff Teams"] <- "Playoff Teams"
+
+PlayoffLeagueStats <- rbind(AmericanLeagueCombine, NationalLeagueCombine)
+View(PlayoffLeagueStats)
+```
+
+
+##All American League Teams
+```{r}
+AmericanLeagueTeams <- bind_cols(MLBStats[[1]], MLBStats[[2]])
+AmericanLeagueTeams <- AmericanLeagueTeams[, -c(2:3)]
+AmericanLeagueTeams <- AmericanLeagueTeams[, -c(3:5)]
+AmericanLeagueTeams <- AmericanLeagueTeams[, -c(5:8)]
+AmericanLeagueTeams <- AmericanLeagueTeams[-c(1,7,13),]
+names(AmericanLeagueTeams)[names(AmericanLeagueTeams) == "X1...1"] <- "American League Teams"
+names(AmericanLeagueTeams)[names(AmericanLeagueTeams) == "X3"] <- "PCT(Win Rate)"
+names(AmericanLeagueTeams)[names(AmericanLeagueTeams) == "X7"] <- "RS(Runs Scored)"
+names(AmericanLeagueTeams)[names(AmericanLeagueTeams) == "X8"] <- "RA(Runs Allowed)"
+AmericanLeagueTeams[1,1] = "New York Yankees"
+AmericanLeagueTeams[2,1] = "Toronto Blue Jays"
+AmericanLeagueTeams[3,1] = "Tampa Bay Rays"
+AmericanLeagueTeams[4,1] = "Baltimore Orioles"
+AmericanLeagueTeams[5,1] = "Boston Red Sox"
+AmericanLeagueTeams[6,1] = "Cleveland Guardians"
+AmericanLeagueTeams[7,1] = "Chicago White Sox"
+AmericanLeagueTeams[8,1] = "Minnesota Twins"
+AmericanLeagueTeams[9,1] = "Detroit Tigers"
+AmericanLeagueTeams[10,1] = "Kansas City Royals"
+AmericanLeagueTeams[11,1] = "Houston Astros"
+AmericanLeagueTeams[12,1] = "Seattle Mariners"
+AmericanLeagueTeams[13,1] = "Los Angeles Angels"
+AmericanLeagueTeams[14,1] = "Texas Rangers"
+AmericanLeagueTeams[15,1] = "Oakland Athletics"
+View(AmericanLeagueTeams)
+```
+
+
+##All National League Teams
+```{r}
+NationalLeagueTeams <- bind_cols(MLBStats[[3]], MLBStats[[4]])
+NationalLeagueTeams <- NationalLeagueTeams[, -c(2:3)]
+NationalLeagueTeams <- NationalLeagueTeams[, -c(3:5)]
+NationalLeagueTeams <- NationalLeagueTeams[, -c(5:8)]
+NationalLeagueTeams <- NationalLeagueTeams[-c(1,7,13),]
+names(NationalLeagueTeams)[names(NationalLeagueTeams) == "X1...1"] <- "National League Teams"
+names(NationalLeagueTeams)[names(NationalLeagueTeams) == "X3"] <- "PCT(Win Rate)"
+names(NationalLeagueTeams)[names(NationalLeagueTeams) == "X7"] <- "RS(Runs Scored)"
+names(NationalLeagueTeams)[names(NationalLeagueTeams) == "X8"] <- "RA(Runs Allowed)"
+NationalLeagueTeams[1,1] = "Atlanta Braves"
+NationalLeagueTeams[2,1] = "New York Mets"
+NationalLeagueTeams[3,1] = "Philadelphia Phillies"
+NationalLeagueTeams[4,1] = "Miami Marlins"
+NationalLeagueTeams[5,1] = "Washington Nationals"
+NationalLeagueTeams[6,1] = "St. Louis Cardinals"
+NationalLeagueTeams[7,1] = "Milwaukee Brewers"
+NationalLeagueTeams[8,1] = "Chicago Cubs"
+NationalLeagueTeams[9,1] = "Pittsburgh Pirates"
+NationalLeagueTeams[10,1] = "Cincinnati Reds"
+NationalLeagueTeams[11,1] = "Los Angeles Dodgers"
+NationalLeagueTeams[12,1] = "San Diego Padres"
+NationalLeagueTeams[13,1] = "San Francisco Giants"
+NationalLeagueTeams[14,1] = "Arizona Diamondbacks"
+NationalLeagueTeams[15,1] = "Colarado Rockies"
+View(NationalLeagueTeams)
+```
+
+##All Teams Combined
+```{r}
+AmericanTeamsCombine <- AmericanLeagueTeams
+NationalTeamsCombine <- NationalLeagueTeams
+
+names(AmericanTeamsCombine)[names(AmericanTeamsCombine) == "American League Teams"] <- "All Teams"
+names(NationalTeamsCombine)[names(NationalTeamsCombine) == "National League Teams"] <- "All Teams"
+
+AllTeamsStats <- rbind(AmericanTeamsCombine, NationalTeamsCombine)
+View(AllTeamsStats)
+```
+
+
+
+
