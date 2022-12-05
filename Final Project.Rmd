@@ -17,6 +17,7 @@ library(trackdown)
 ```
 
 ##Read In Data
+
 ```{r}
 MLBStats <- read_html(
   x = "https://www.espn.com/mlb/standings"
@@ -27,11 +28,8 @@ MLBStats <- read_html(
 View(MLBStats)
 ```
 
-
-
-
-
 ##All American Playoff Teams
+
 ```{r}
 AmericanPlayoffTeams <- bind_cols(MLBStats[[1]], MLBStats[[2]])
 AmericanPlayoffTeams <- AmericanPlayoffTeams[, -c(2:3)]
@@ -53,6 +51,7 @@ View(AmericanPlayoffTeams)
 ```
 
 ##All National Playoff Teams
+
 ```{r}
 NationalPlayoffTeams <-  bind_cols(MLBStats[[3]], MLBStats[[4]])
 NationalPlayoffTeams <- NationalPlayoffTeams[, -c(2:3)]
@@ -72,8 +71,8 @@ NationalPlayoffTeams[6,1] = "San Diego Padres"
 View(NationalPlayoffTeams)
 ```
 
-
 ##All Playoff Teams
+
 ```{r}
 AmericanLeagueCombine <- AmericanPlayoffTeams
 NationalLeagueCombine <- NationalPlayoffTeams
@@ -85,8 +84,8 @@ PlayoffLeagueStats <- rbind(AmericanLeagueCombine, NationalLeagueCombine)
 View(PlayoffLeagueStats)
 ```
 
-
 ##All American League Teams
+
 ```{r}
 AmericanLeagueTeams <- bind_cols(MLBStats[[1]], MLBStats[[2]])
 AmericanLeagueTeams <- AmericanLeagueTeams[, -c(2:3)]
@@ -115,8 +114,8 @@ AmericanLeagueTeams[15,1] = "Oakland Athletics"
 View(AmericanLeagueTeams)
 ```
 
-
 ##All National League Teams
+
 ```{r}
 NationalLeagueTeams <- bind_cols(MLBStats[[3]], MLBStats[[4]])
 NationalLeagueTeams <- NationalLeagueTeams[, -c(2:3)]
@@ -146,6 +145,7 @@ View(NationalLeagueTeams)
 ```
 
 ##All Teams Combined
+
 ```{r}
 AmericanTeamsCombine <- AmericanLeagueTeams
 NationalTeamsCombine <- NationalLeagueTeams
@@ -157,11 +157,33 @@ AllTeamsStats <- rbind(AmericanTeamsCombine, NationalTeamsCombine)
 View(AllTeamsStats)
 ```
 
+
+##All League Teams chart
 ```{r}
-ggplot(data = AllTeamsStats, aes(x= AllTeamsStats[[2]], y =AllTeamsStats[[3]], color =AllTeamsStats[[1]], size =AllTeamsStats[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored")+ ggtitle("AllTeams Win Rate per Runs scored")
+ggplot(data = AllTeamsStats, aes(x= AllTeamsStats[[2]], y =AllTeamsStats[[3]], color =AllTeamsStats[[1]], size =AllTeamsStats[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored")+ ggtitle("AllTeams Win Rate per Runs scored)") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
+```
+##National League Teams chart
+```{r}
+ggplot(data = NationalLeagueTeams, aes(x= NationalLeagueTeams[[2]], y =NationalLeagueTeams[[3]], color =NationalLeagueTeams[[1]], size =NationalLeagueTeams[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored)")+ ggtitle("National League Teams Win Rate per Runs scored") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
+```
+##American League Teams chart
+```{r}
+ggplot(data = AmericanLeagueTeams, aes(x= AmericanLeagueTeams[[2]], y =AmericanLeagueTeams[[3]], color =AmericanLeagueTeams[[1]], size =AmericanLeagueTeams[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored)")+ ggtitle("American League Teams Win Rate per Runs scored") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
 ```
 
+##Play off League Teams chart
+
 ```{r}
-ggplot(data = NationalLeagueTeams, aes(x= NationalLeagueTeams[[2]], y =NationalLeagueTeams[[3]], color =NationalLeagueTeams[[1]], size =NationalLeagueTeams[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored")+ ggtitle("National League Teams Win Rate per Runs scored")
+ggplot(data = PlayoffLeagueStats, aes(x= PlayoffLeagueStats[[2]], y =PlayoffLeagueStats[[3]], color =PlayoffLeagueStats[[1]], size =PlayoffLeagueStats[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored)")+ ggtitle("American League Teams Win Rate per Runs scored") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
+```
+
+## National Play off Teams chart
+```{r}
+ggplot(data = NationalPlayoffTeams, aes(x= NationalPlayoffTeams[[2]], y =NationalPlayoffTeams[[3]], color =NationalPlayoffTeams[[1]], size =NationalPlayoffTeams[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored)")+ ggtitle("American League Teams Win Rate per Runs scored") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
+```
+
+## American Play off Teams chart 
+```{r}
+ggplot(data = AmericanPlayoffTeams, aes(x= AmericanPlayoffTeams[[2]], y =AmericanPlayoffTeams[[3]], color =AmericanPlayoffTeams[[1]], size =AmericanPlayoffTeams[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored)")+ ggtitle("American League Teams Win Rate per Runs scored") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
 ```
 
