@@ -1,21 +1,9 @@
 ---
 title: "Final Project"
-author: "Owen Braglio"
+author: "Owen Braglio, Dean Bae, Jack Billings"
 date: "2022-12-02"
 output: html_document
 ---
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-library(rvest)
-library(dplyr)
-library(readr)
-library(ggplot2)
-library(tidyr)
-knitr::opts_chunk$set(echo = FALSE)
-library(trackdown)
-#Google R Style
-```
 
 # Report
 
@@ -33,8 +21,21 @@ We got both of our data sources from the MLB's website as they have collected al
 
 We'll be focusing on Win Rate, Runs Scored and Runs Allowed to determine if there is a significant like between these factors and if a team made it to playoffs or not that season.
 
+```{r setup, include=FALSE, echo = FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(rvest)
+library(dplyr)
+library(readr)
+library(ggplot2)
+library()
+library(tidyr)
+knitr::opts_chunk$set(echo = FALSE)
+library(trackdown)
+```
+
+##Read In Data
+
 ```{r}
-#Read In Data
 MLBStats <- read_html(
   x = "https://www.espn.com/mlb/standings"
 ) %>%
@@ -44,20 +45,18 @@ MLBStats <- read_html(
 View(MLBStats)
 ```
 
+##All American Playoff Teams
+
 ```{r}
-#All American Playoff Teams
-#Scraping data
 AmericanPlayoffTeams <- bind_cols(MLBStats[[1]], MLBStats[[2]])
 AmericanPlayoffTeams <- AmericanPlayoffTeams[, -c(2:3)]
 AmericanPlayoffTeams <- AmericanPlayoffTeams[, -c(3:5)]
 AmericanPlayoffTeams <- AmericanPlayoffTeams[, -c(5:8)]
 AmericanPlayoffTeams <- AmericanPlayoffTeams[-c(1,5:7,9:13,16:18),]
-#Renaming catagories
 names(AmericanPlayoffTeams)[names(AmericanPlayoffTeams) == "X1...1"] <- "American League Playoff Teams"
 names(AmericanPlayoffTeams)[names(AmericanPlayoffTeams) == "X3"] <- "PCT(Win Rate)"
 names(AmericanPlayoffTeams)[names(AmericanPlayoffTeams) == "X7"] <- "RS(Runs Scored)"
 names(AmericanPlayoffTeams)[names(AmericanPlayoffTeams) == "X8"] <- "RA(Runs Allowed)"
-#Renaming teams
 AmericanPlayoffTeams[1,1] = "New York Yankees"
 AmericanPlayoffTeams[2,1] = "Toronto Blue Jays"
 AmericanPlayoffTeams[3,1] = "Tampa Bay Rays"
@@ -67,21 +66,23 @@ AmericanPlayoffTeams[6,1] = "Seattle Mariners"
 View(AmericanPlayoffTeams)
 
 ```
+```{r}
+AmericanPlayoffTeamsModel <- lm(formula = as.numeric(AmericanPlayoffTeams[[2]])~as.numeric(AmericanPlayoffTeams[[4]], data= AmericanPlayoffTeams ))
+summary(AmericanPlayoffTeamsModel)
+```
+
+##All National Playoff Teams
 
 ```{r}
-#All National Playoff Teams
-#Scraping data
 NationalPlayoffTeams <-  bind_cols(MLBStats[[3]], MLBStats[[4]])
 NationalPlayoffTeams <- NationalPlayoffTeams[, -c(2:3)]
 NationalPlayoffTeams <- NationalPlayoffTeams[, -c(3:5)]
 NationalPlayoffTeams <- NationalPlayoffTeams[, -c(5:8)]
 NationalPlayoffTeams <- NationalPlayoffTeams[-c(1,5:7,9:13,16:18),]
-#Renaming columns
 names(NationalPlayoffTeams)[names(NationalPlayoffTeams) == "X1...1"] <- "National League Playoff Teams"
 names(NationalPlayoffTeams)[names(NationalPlayoffTeams) == "X3"] <- "PCT(Win Rate)"
 names(NationalPlayoffTeams)[names(NationalPlayoffTeams) == "X7"] <- "RS(Runs Scored)"
 names(NationalPlayoffTeams)[names(NationalPlayoffTeams) == "X8"] <- "RA(Runs Allowed)"
-#Hardcoding first row to be the teams which they refer to
 NationalPlayoffTeams[1,1] = "Atlanta Braves"
 NationalPlayoffTeams[2,1] = "New York Mets"
 NationalPlayoffTeams[3,1] = "Philadelphia Phillies"
@@ -91,9 +92,9 @@ NationalPlayoffTeams[6,1] = "San Diego Padres"
 View(NationalPlayoffTeams)
 ```
 
+##All Playoff Teams
+
 ```{r}
-#All Playoff Teams
-#combining the two tables
 AmericanLeagueCombine <- AmericanPlayoffTeams
 NationalLeagueCombine <- NationalPlayoffTeams
 
@@ -104,8 +105,9 @@ PlayoffLeagueStats <- rbind(AmericanLeagueCombine, NationalLeagueCombine)
 View(PlayoffLeagueStats)
 ```
 
+##All American League Teams
+
 ```{r}
-#All American League Teams
 AmericanLeagueTeams <- bind_cols(MLBStats[[1]], MLBStats[[2]])
 AmericanLeagueTeams <- AmericanLeagueTeams[, -c(2:3)]
 AmericanLeagueTeams <- AmericanLeagueTeams[, -c(3:5)]
@@ -133,8 +135,9 @@ AmericanLeagueTeams[15,1] = "Oakland Athletics"
 View(AmericanLeagueTeams)
 ```
 
+##All National League Teams
+
 ```{r}
-#All National League Teams
 NationalLeagueTeams <- bind_cols(MLBStats[[3]], MLBStats[[4]])
 NationalLeagueTeams <- NationalLeagueTeams[, -c(2:3)]
 NationalLeagueTeams <- NationalLeagueTeams[, -c(3:5)]
@@ -162,8 +165,9 @@ NationalLeagueTeams[15,1] = "Colarado Rockies"
 View(NationalLeagueTeams)
 ```
 
+##All Teams Combined
+
 ```{r}
-#All Teams Combined
 AmericanTeamsCombine <- AmericanLeagueTeams
 NationalTeamsCombine <- NationalLeagueTeams
 
@@ -174,48 +178,128 @@ AllTeamsStats <- rbind(AmericanTeamsCombine, NationalTeamsCombine)
 View(AllTeamsStats)
 ```
 
-# Visualizations
+##Change table character to numeric
+```{r}
 
-## All League Teams chart
+PlayoffLeagueStats$`PCT(Win Rate)` <- as.numeric(PlayoffLeagueStats$`PCT(Win Rate)`)
+PlayoffLeagueStats$`RS(Runs Scored)` <- as.numeric(PlayoffLeagueStats$`RS(Runs Scored)`)
+PlayoffLeagueStats$`RA(Runs Allowed)` <- as.numeric(PlayoffLeagueStats$`RA(Runs Allowed)`)
+sapply(PlayoffLeagueStats, class)
+```
 
+##Change table character to numeric(make table of team which not make play off)
+```{r}
+notPlayoffTeams <- AllTeamsStats[-c(1,2,3,6,11,12,16,17,18,21,26,27),]
+notPlayoffTeams$`PCT(Win Rate)` <- as.numeric(notPlayoffTeams$`PCT(Win Rate)`)
+notPlayoffTeams$`RS(Runs Scored)` <- as.numeric(notPlayoffTeams$`RS(Runs Scored)`)
+notPlayoffTeams$`RA(Runs Allowed)` <- as.numeric(notPlayoffTeams$`RA(Runs Allowed)`)
+View(notPlayoffTeams)
+```
+#notPlayoffTeams Summary table
+```{r}
+notplayoffTeamsSummary <- notPlayoffTeams  %>%
+  summarize(count = n(), 
+            "PCTmean" = mean(notPlayoffTeams$`PCT(Win Rate)`),
+            minimum = min(notPlayoffTeams$`PCT(Win Rate)`),
+            "PCTfirstQuintile" = quantile(notPlayoffTeams$`PCT(Win Rate)`, .2),
+            "PCTsecondQuintile" = quantile(notPlayoffTeams$`PCT(Win Rate)`, .4),
+            "PCTmedian" = median(notPlayoffTeams$`PCT(Win Rate)`),
+            "PCTthirdQuintile" = quantile(notPlayoffTeams$`PCT(Win Rate)`, .6),
+            "PCTfourthQuintile" = quantile(notPlayoffTeams$`PCT(Win Rate)`, .8),
+            "PCTmaximum" = max(notPlayoffTeams$`PCT(Win Rate)`),
+            "PCTstandard deviation" = sd(notPlayoffTeams$`PCT(Win Rate)`),
+            "RSmean" = mean(notPlayoffTeams$`RS(Runs Scored)`),
+            "RSminimum" = min(notPlayoffTeams$`RS(Runs Scored)`),
+            "RSfirstQuintile" = quantile(notPlayoffTeams$`RS(Runs Scored)`, .2),
+            "RSsecondQuintile" = quantile(notPlayoffTeams$`RS(Runs Scored)`, .4),
+            "RSmedian" = median(notPlayoffTeams$`RS(Runs Scored)`),
+            "RSthirdQuintile" = quantile(notPlayoffTeams$`RS(Runs Scored)`, .6),
+            "RSfourthQuintile" = quantile(notPlayoffTeams$`RS(Runs Scored)`, .8),
+            "RSmaximum" = max(notPlayoffTeams$`RS(Runs Scored)`),
+            "RSstandard deviation" = sd(notPlayoffTeams$`RS(Runs Scored)`),
+            "RAmean" = mean(notPlayoffTeams$`RA(Runs Allowed)`),
+            "RAminimum" = min(notPlayoffTeams$`RA(Runs Allowed)`),
+            "RAfirstQuintile" = quantile(notPlayoffTeams$`RA(Runs Allowed)`, .2),
+            "RAsecondQuintile" = quantile(notPlayoffTeams$`RA(Runs Allowed)`, .4), 
+            "RAmedian" = median(notPlayoffTeams$`RA(Runs Allowed)`),
+            "RAthirdQuintile" = quantile(notPlayoffTeams$`RA(Runs Allowed)`, .6),
+            "RAfourthQuintile" = quantile(notPlayoffTeams$`RA(Runs Allowed)`, .8),
+            "RAmaximum" = max(notPlayoffTeams$`RA(Runs Allowed)`),
+            "RAstandard deviation" = sd(notPlayoffTeams$`RA(Runs Allowed)`))
+notplayoffTeamsSummary
+
+```
+
+##Playoffteams summary table
+
+```{r}
+PlayoffLeagueStatsSummary <- PlayoffLeagueStats %>%
+  summarize(count = n(), 
+            "PCTmean" = mean(PlayoffLeagueStats$`PCT(Win Rate)`),
+            minimum = min(PlayoffLeagueStats$`PCT(Win Rate)`),
+            "PCTfirstQuintile" = quantile(PlayoffLeagueStats$`PCT(Win Rate)`, .2),
+            "PCTsecondQuintile" = quantile(PlayoffLeagueStats$`PCT(Win Rate)`, .4),
+            "PCTmedian" = median(PlayoffLeagueStats$`PCT(Win Rate)`),
+            "PCTthirdQuintile" = quantile(PlayoffLeagueStats$`PCT(Win Rate)`, .6),
+            "PCTfourthQuintile" = quantile(PlayoffLeagueStats$`PCT(Win Rate)`, .8),
+            "PCTmaximum" = max(PlayoffLeagueStats$`PCT(Win Rate)`),
+            "PCTstandard deviation" = sd(PlayoffLeagueStats$`PCT(Win Rate)`),
+            "RSmean" = mean(PlayoffLeagueStats$`RS(Runs Scored)`),
+            "RSminimum" = min(PlayoffLeagueStats$`RS(Runs Scored)`),
+            "RSfirstQuintile" = quantile(PlayoffLeagueStats$`RS(Runs Scored)`, .2),
+            "RSsecondQuintile" = quantile(PlayoffLeagueStats$`RS(Runs Scored)`, .4),
+            "RSmedian" = median(PlayoffLeagueStats$`RS(Runs Scored)`),
+            "RSthirdQuintile" = quantile(PlayoffLeagueStats$`RS(Runs Scored)`, .6),
+            "RSfourthQuintile" = quantile(PlayoffLeagueStats$`RS(Runs Scored)`, .8),
+            "RSmaximum" = max(PlayoffLeagueStats$`RS(Runs Scored)`),
+            "RSstandard deviation" = sd(PlayoffLeagueStats$`RS(Runs Scored)`),
+            "RAmean" = mean(PlayoffLeagueStats$`RA(Runs Allowed)`),
+            "RAminimum" = min(PlayoffLeagueStats$`RA(Runs Allowed)`),
+            "RAfirstQuintile" = quantile(PlayoffLeagueStats$`RA(Runs Allowed)`, .2),
+            "RAsecondQuintile" = quantile(PlayoffLeagueStats$`RA(Runs Allowed)`, .4), 
+            "RAmedian" = median(PlayoffLeagueStats$`RA(Runs Allowed)`),
+            "RAthirdQuintile" = quantile(PlayoffLeagueStats$`RA(Runs Allowed)`, .6),
+            "RAfourthQuintile" = quantile(PlayoffLeagueStats$`RA(Runs Allowed)`, .8),
+            "RAmaximum" = max(PlayoffLeagueStats$`RA(Runs Allowed)`),
+            "RAstandard deviation" = sd(PlayoffLeagueStats$`RA(Runs Allowed)`))
+PlayoffLeagueStatsSummary
+```
+
+##Merge the two summary table
+
+```{r}
+merge_table <- rbind(notplayoffTeamsSummary, PlayoffLeagueStatsSummary)
+merge_table
+```
+
+
+
+##All League Teams chart
 ```{r}
 ggplot(data = AllTeamsStats, aes(x= as.numeric(AllTeamsStats[[2]]), y =as.numeric(AllTeamsStats[[3]]), color =AllTeamsStats[[1]], size =AllTeamsStats[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored")+ ggtitle("AllTeams Win Rate per Runs scored)") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
 ```
-
-As can be seen in the visualization, the overall trend is the greater the runs scored the higher the win percentage. Small variances can be seen where teams did not conform to a direct relationship between the two. The overall trend is inherent as the team with more runs wins the game but, as can be seen by the size difference of the points, this is not the only direct relationship. The amount of runs allowed has a direct inverse relationship with the win percentage so it can be extrapolated that the game is just as much about preventing the other team from scoring. A balance must be maintained, though, as can be seen from teams like the Minnesota twins only allowing 684 runs, much better than many teams above them, but still losing because they failed to score runs themselves.
-
-## National League Teams chart
-
+##National League Teams chart
 ```{r}
 ggplot(data = NationalLeagueTeams, aes(x= as.numeric(NationalLeagueTeams[[2]]), y =as.numeric(NationalLeagueTeams[[3]]), color =NationalLeagueTeams[[1]], size =NationalLeagueTeams[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored)")+ ggtitle("National League Teams Win Rate per Runs scored") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
 ```
-
-This graph is the greatest example of the direct relationship between the factors of Runs Scored and Win Rate. As the data lines up, it gives an almost linear line from the Washington Nationals to the Los Angeles Dodgers showing the higher the runs scored over a season, the more games won in it.
-
-## American League Teams chart
-
+##American League Teams chart
 ```{r}
 ggplot(data = AmericanLeagueTeams, aes(x= as.numeric(AmericanLeagueTeams[[2]]), y =as.numeric(AmericanLeagueTeams[[3]]), color =AmericanLeagueTeams[[1]], size =AmericanLeagueTeams[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored)")+ ggtitle("American League Teams Win Rate per Runs scored") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
 ```
 
-This graph is nothing like a clean line but shows the inverse relationship of Runs Allowed and Win Rate. As we move along the x axis it can be observed, with some outliers, that the size of each point, or the Runs Allowed, shrinks.
-
-## Play off League Teams chart
+##Play off League Teams chart
 
 ```{r}
 ggplot(data = PlayoffLeagueStats, aes(x= as.numeric(PlayoffLeagueStats[[2]]), y =as.numeric(PlayoffLeagueStats[[3]]), color =PlayoffLeagueStats[[1]], size =PlayoffLeagueStats[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored)")+ ggtitle("American League Teams Win Rate per Runs scored") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
 ```
 
-As we move into the playoff teams, we see the best of the best this season and a reinforcing of the trends already observed previously. As the data progresses up, the win rate increases and as the win rate increases the size (runs allowed) decreases.
-
 ## National Play off Teams chart
-
 ```{r}
 ggplot(data = NationalPlayoffTeams, aes(x= as.numeric(NationalPlayoffTeams[[2]]), y =as.numeric(NationalPlayoffTeams[[3]]), color =NationalPlayoffTeams[[1]], size =NationalPlayoffTeams[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored)")+ ggtitle("American League Teams Win Rate per Runs scored") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
 ```
 
-## American Play off Teams chart
-
+## American Play off Teams chart 
 ```{r}
 ggplot(data = AmericanPlayoffTeams, aes(x= as.numeric(AmericanPlayoffTeams[[2]]), y =as.numeric(AmericanPlayoffTeams[[3]]), color =AmericanPlayoffTeams[[1]], size =AmericanPlayoffTeams[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored)")+ ggtitle("American League Teams Win Rate per Runs scored") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
 ```
+
