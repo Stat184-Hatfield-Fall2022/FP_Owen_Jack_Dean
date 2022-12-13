@@ -1,12 +1,12 @@
 ---
 title: "Final Project"
-author: "Owen Braglio, Dean Bae, Jack Billings"
+author: "Owen Braglio"
 date: "2022-12-02"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(echo = TRUE)
 library(rvest)
 library(dplyr)
 library(readr)
@@ -179,7 +179,7 @@ View(AllTeamsStats)
 ## All League Teams chart
 
 ```{r}
-ggplot(data = AllTeamsStats, aes(x= AllTeamsStats[[2]], y =AllTeamsStats[[3]], color =AllTeamsStats[[1]], size =AllTeamsStats[[4]])) + scale_x_discrete(guide = guide_axis(n.dodge=3)) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored")+ ggtitle("All Teams(Win Rate per Runs scored)") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
+ggplot(data = AllTeamsStats, aes(x= as.numeric(AllTeamsStats[[2]]), y =as.numeric(AllTeamsStats[[3]]), color =AllTeamsStats[[1]], size =AllTeamsStats[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored")+ ggtitle("AllTeams Win Rate per Runs scored)") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
 ```
 
 As can be seen in the visualization, the overall trend is the greater the runs scored the higher the win percentage. Small variances can be seen where teams did not conform to a direct relationship between the two. The overall trend is inherent as the team with more runs wins the game but, as can be seen by the size difference of the points, this is not the only direct relationship. The amount of runs allowed has a direct inverse relationship with the win percentage so it can be extrapolated that the game is just as much about preventing the other team from scoring. A balance must be maintained, though, as can be seen from teams like the Minnesota twins only allowing 684 runs, much better than many teams above them, but still losing because they failed to score runs themselves.
@@ -187,7 +187,7 @@ As can be seen in the visualization, the overall trend is the greater the runs s
 ## National League Teams chart
 
 ```{r}
-ggplot(data = NationalLeagueTeams, aes(x= NationalLeagueTeams[[2]], y =NationalLeagueTeams[[3]], color =NationalLeagueTeams[[1]], size =NationalLeagueTeams[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored)")+ ggtitle("National League Teams(Win Rate per Runs scored)") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
+ggplot(data = NationalLeagueTeams, aes(x= as.numeric(NationalLeagueTeams[[2]]), y =as.numeric(NationalLeagueTeams[[3]]), color =NationalLeagueTeams[[1]], size =NationalLeagueTeams[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored)")+ ggtitle("National League Teams Win Rate per Runs scored") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
 ```
 
 This graph is the greatest example of the direct relationship between the factors of Runs Scored and Win Rate. As the data lines up, it gives an almost linear line from the Washington Nationals to the Los Angeles Dodgers showing the higher the runs scored over a season, the more games won in it.
@@ -195,7 +195,7 @@ This graph is the greatest example of the direct relationship between the factor
 ## American League Teams chart
 
 ```{r}
-ggplot(data = AmericanLeagueTeams, aes(x= AmericanLeagueTeams[[2]], y =AmericanLeagueTeams[[3]], color =AmericanLeagueTeams[[1]], size =AmericanLeagueTeams[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored)")+ ggtitle("American League Teams(Win Rate per Runs scored)") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
+ggplot(data = AmericanLeagueTeams, aes(x= as.numeric(AmericanLeagueTeams[[2]]), y =as.numeric(AmericanLeagueTeams[[3]]), color =AmericanLeagueTeams[[1]], size =AmericanLeagueTeams[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored)")+ ggtitle("American League Teams Win Rate per Runs scored") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
 ```
 
 This graph is nothing like a clean line but shows the inverse relationship of Runs Allowed and Win Rate. As we move along the x axis it can be observed, with some outliers, that the size of each point, or the Runs Allowed, shrinks.
@@ -203,7 +203,7 @@ This graph is nothing like a clean line but shows the inverse relationship of Ru
 ## Play off League Teams chart
 
 ```{r}
-ggplot(data = PlayoffLeagueStats, aes(x= PlayoffLeagueStats[[2]], y =PlayoffLeagueStats[[3]], color =PlayoffLeagueStats[[1]], size =PlayoffLeagueStats[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored)")+ ggtitle("All Playoff Teams(Win Rate per Runs scored)") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
+ggplot(data = PlayoffLeagueStats, aes(x= as.numeric(PlayoffLeagueStats[[2]]), y =as.numeric(PlayoffLeagueStats[[3]]), color =PlayoffLeagueStats[[1]], size =PlayoffLeagueStats[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored)")+ ggtitle("American League Teams Win Rate per Runs scored") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
 ```
 
 As we move into the playoff teams, we see the best of the best this season and a reinforcing of the trends already observed previously. As the data progresses up, the win rate increases and as the win rate increases the size (runs allowed) decreases.
@@ -211,11 +211,11 @@ As we move into the playoff teams, we see the best of the best this season and a
 ## National Play off Teams chart
 
 ```{r}
-ggplot(data = NationalPlayoffTeams, aes(x= NationalPlayoffTeams[[2]], y =NationalPlayoffTeams[[3]], color =NationalPlayoffTeams[[1]], size =NationalPlayoffTeams[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored)")+ ggtitle("National League Teams(Win Rate per Runs scored)") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
+ggplot(data = NationalPlayoffTeams, aes(x= as.numeric(NationalPlayoffTeams[[2]]), y =as.numeric(NationalPlayoffTeams[[3]]), color =NationalPlayoffTeams[[1]], size =NationalPlayoffTeams[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored)")+ ggtitle("American League Teams Win Rate per Runs scored") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
 ```
 
 ## American Play off Teams chart
 
 ```{r}
-ggplot(data = AmericanPlayoffTeams, aes(x= AmericanPlayoffTeams[[2]], y =AmericanPlayoffTeams[[3]], color =AmericanPlayoffTeams[[1]], size =AmericanPlayoffTeams[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored)")+ ggtitle("American League Teams(Win Rate per Runs scored)") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
+ggplot(data = AmericanPlayoffTeams, aes(x= as.numeric(AmericanPlayoffTeams[[2]]), y =as.numeric(AmericanPlayoffTeams[[3]]), color =AmericanPlayoffTeams[[1]], size =AmericanPlayoffTeams[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored)")+ ggtitle("American League Teams Win Rate per Runs scored") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
 ```
