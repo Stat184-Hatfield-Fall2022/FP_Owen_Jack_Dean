@@ -1,11 +1,11 @@
 ---
 title: "Final Project"
-author: "Owen Braglio"
+author: "Owen Braglio, Dean Bae, Jack Billings"
 date: "2022-12-02"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, echo = FALSE, warning = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(rvest)
 library(dplyr)
