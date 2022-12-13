@@ -5,6 +5,22 @@ date: "2022-12-02"
 output: html_document
 ---
 
+# Report
+
+### Research Question: 
+
+What is the relationship between a baseball team's runs scored, runs allowed, and their win rate for that season?
+
+We wanted to find if there was a significant link between the runs scored by a team in a season, and their win rate. The initial hypothesis is yes of course, it should be a direct relationship, but factors like blowout games and close defeats may skew the numbers and make them less accurate than initially presumed.
+
+### Data Source
+
+We got both of our data sources from the MLB's website as they have collected all relevant data into a couple tables for each Baseball League. As all teams were gather from the same source it also ensured consistency between the numbers reported.
+
+### Data Focus
+
+We'll be focusing on Win Rate, Runs Scored and Runs Allowed to determine if there is a significant like between these factors and if a team made it to playoffs or not that season.
+
 ```{r setup, include=FALSE, echo = FALSE, warning = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(rvest)
