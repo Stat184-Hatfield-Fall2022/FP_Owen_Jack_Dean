@@ -21,7 +21,7 @@ We got both of our data sources from the MLB's website as they have collected al
 
 ### Data Focus
 
-We'll be focusing on Win Rate, Runs Scored and Runs Allowed to determine if there is a significant like between these factors and if a team made it to playoffs or not that season.
+We'll be focusing on Win Rate, Runs Scored and Runs Allowed to determine if there is a significant like between these factors and if a team made it to playoffs or not that season. This allows us to both narrow down our sample sizes as well as having multiple sets with which to compare between.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
@@ -67,7 +67,7 @@ AmericanPlayoffTeams[6,1] = "Seattle Mariners"
 
 ```
 
-```{r}
+```{r, echo=FALSE}
 AmericanPlayoffTeamsModel <- lm(formula = as.numeric(AmericanPlayoffTeams[[2]])~as.numeric(AmericanPlayoffTeams[[4]], data= AmericanPlayoffTeams ))
 ```
 
@@ -192,39 +192,42 @@ notPlayoffTeams$`RA(Runs Allowed)` <- as.numeric(notPlayoffTeams$`RA(Runs Allowe
 
 notplayoffTeamsSummaryPCT <- notPlayoffTeams  %>%
   summarize(count = n(), 
+            "type" = "Win Rate",
             "mean" = round(mean(notPlayoffTeams$`PCT(Win Rate)`), digits = 3),
             "min" = round(min(notPlayoffTeams$`PCT(Win Rate)`, digits = 3)),
-            "firstQuintile" = round(quantile(notPlayoffTeams$`PCT(Win Rate)`, .2), digits = 3),
-            "secondQuintile" = round(quantile(notPlayoffTeams$`PCT(Win Rate)`, .4), digits = 3),
+            "firstQuin" = round(quantile(notPlayoffTeams$`PCT(Win Rate)`, .2), digits = 3),
+            "secondQuin" = round(quantile(notPlayoffTeams$`PCT(Win Rate)`, .4), digits = 3),
             "median" = round(median(notPlayoffTeams$`PCT(Win Rate)`), digits = 3),
-            "thirdQuintile" = round(quantile(notPlayoffTeams$`PCT(Win Rate)`, .6), digits = 3),
-            "fourthQuintile" = round(quantile(notPlayoffTeams$`PCT(Win Rate)`, .8), digits = 3),
+            "thirdQuin" = round(quantile(notPlayoffTeams$`PCT(Win Rate)`, .6), digits = 3),
+            "fourthQuin" = round(quantile(notPlayoffTeams$`PCT(Win Rate)`, .8), digits = 3),
             "max" = round(max(notPlayoffTeams$`PCT(Win Rate)`), digits = 3),
             "standdev" = round(sd(notPlayoffTeams$`PCT(Win Rate)`), digits = 3))
 
 notplayoffTeamsSummaryRS <- notPlayoffTeams  %>%
   summarize(count = n(),
+            "type" = "Runs Scored",
             "mean" = round(mean(notPlayoffTeams$`RS(Runs Scored)`), digits = 3),
             "min" = round(min(notPlayoffTeams$`RS(Runs Scored)`), digits = 3),
-            "firstQuintile" = round(quantile(notPlayoffTeams$`RS(Runs Scored)`, .2), digits = 3),
-            "secondQuintile" = round(quantile(notPlayoffTeams$`RS(Runs Scored)`, .4), digits = 3),
+            "firstQuin" = round(quantile(notPlayoffTeams$`RS(Runs Scored)`, .2), digits = 3),
+            "secondQuin" = round(quantile(notPlayoffTeams$`RS(Runs Scored)`, .4), digits = 3),
             "median" = round(median(notPlayoffTeams$`RS(Runs Scored)`), digits = 3),
-            "thirdQuintile" = round(quantile(notPlayoffTeams$`RS(Runs Scored)`, .6), digits = 3),
-            "fourthQuintile" = round(quantile(notPlayoffTeams$`RS(Runs Scored)`, .8), digits = 3),
+            "thirdQuin" = round(quantile(notPlayoffTeams$`RS(Runs Scored)`, .6), digits = 3),
+            "fourthQuin" = round(quantile(notPlayoffTeams$`RS(Runs Scored)`, .8), digits = 3),
             "max" = round(max(notPlayoffTeams$`RS(Runs Scored)`), digits = 3),
             "standdev" = round(sd(notPlayoffTeams$`RS(Runs Scored)`), digits = 3))
 
 notplayoffTeamsSummaryRA <- notPlayoffTeams  %>%
   summarize(count = n(),
-            "mean" = mean(notPlayoffTeams$`RA(Runs Allowed)`),
-            "min" = min(notPlayoffTeams$`RA(Runs Allowed)`),
-            "firstQuintile" = quantile(notPlayoffTeams$`RA(Runs Allowed)`, .2),
-            "secondQuintile" = quantile(notPlayoffTeams$`RA(Runs Allowed)`, .4), 
-            "median" = median(notPlayoffTeams$`RA(Runs Allowed)`),
-            "thirdQuintile" = quantile(notPlayoffTeams$`RA(Runs Allowed)`, .6),
-            "fourthQuintile" = quantile(notPlayoffTeams$`RA(Runs Allowed)`, .8),
-            "max" = max(notPlayoffTeams$`RA(Runs Allowed)`),
-            "standdev" = sd(notPlayoffTeams$`RA(Runs Allowed)`))
+            "type" = "Runs Allowed",
+            "mean" = round(mean(notPlayoffTeams$`RA(Runs Allowed)`), digits = 3),
+            "min" = round(min(notPlayoffTeams$`RA(Runs Allowed)`), digits = 3),
+            "firstQuin" = round(quantile(notPlayoffTeams$`RA(Runs Allowed)`, .2), digits = 3),
+            "secondQuin" = round(quantile(notPlayoffTeams$`RA(Runs Allowed)`, .4), digits = 3), 
+            "median" = round(median(notPlayoffTeams$`RA(Runs Allowed)`), digits = 3),
+            "thirdQuin" = round(quantile(notPlayoffTeams$`RA(Runs Allowed)`, .6), digits = 3),
+            "fourthQuin" = round(quantile(notPlayoffTeams$`RA(Runs Allowed)`, .8), digits = 3),
+            "max" = round(max(notPlayoffTeams$`RA(Runs Allowed)`), digits = 3),
+            "standdev" = round(sd(notPlayoffTeams$`RA(Runs Allowed)`), digits = 3))
 
 Merged <- rbind(notplayoffTeamsSummaryPCT, notplayoffTeamsSummaryRS)
 Merged <- rbind(Merged, notplayoffTeamsSummaryRA)
@@ -234,49 +237,56 @@ kable(Merged)
 
 ```
 
+The first statistic, Win Rate, increases by close to .3 points every quintile, but increases moderately as it nears to top which shows a slight skew by the best teams on the fringe of the cluster. Runs scored has an inverse of this phenomenon, the increase to each quintile starts off at about 40 and decreases. This can also be seen on the graphs where the non playoff teams start to drop in runs scored where they meet those who made it to the playoffs. Runs allowed is where the greatest variance can be seen, starting off by an 20 point increase and ending with an increase of 60 from the fourth quintile to maximum. Where runs scored had an obvious link to win rate, runs allowed is less bound.
+
 ## Playoff Teams summary table
 
 ```{r}
 PlayoffLeagueStatsSummaryPCT <- PlayoffLeagueStats %>%
   summarize(count = n(), 
-            "mean" = mean(PlayoffLeagueStats$`PCT(Win Rate)`),
-            "min" = min(PlayoffLeagueStats$`PCT(Win Rate)`),
-            "firstQuintile" = quantile(PlayoffLeagueStats$`PCT(Win Rate)`, .2),
-            "secondQuintile" = quantile(PlayoffLeagueStats$`PCT(Win Rate)`, .4),
-            "median" = median(PlayoffLeagueStats$`PCT(Win Rate)`),
-            "thirdQuintile" = quantile(PlayoffLeagueStats$`PCT(Win Rate)`, .6),
-            "fourthQuintile" = quantile(PlayoffLeagueStats$`PCT(Win Rate)`, .8),
-            "max" = max(PlayoffLeagueStats$`PCT(Win Rate)`),
-            "standdev" = sd(PlayoffLeagueStats$`PCT(Win Rate)`))
+            "type" = "Win Rate",
+            "mean" = round(mean(PlayoffLeagueStats$`PCT(Win Rate)`), digits = 3),
+            "min" = round(min(PlayoffLeagueStats$`PCT(Win Rate)`), digits = 3),
+            "firstQuin" = round(quantile(PlayoffLeagueStats$`PCT(Win Rate)`, .2), digits = 3),
+            "secondQuin" = round(quantile(PlayoffLeagueStats$`PCT(Win Rate)`, .4), digits = 3),
+            "median" = round(median(PlayoffLeagueStats$`PCT(Win Rate)`), digits = 3),
+            "thirdQuin" = round(quantile(PlayoffLeagueStats$`PCT(Win Rate)`, .6), digits = 3),
+            "fourthQuin" = round(quantile(PlayoffLeagueStats$`PCT(Win Rate)`, .8), digits = 3),
+            "max" = round(max(PlayoffLeagueStats$`PCT(Win Rate)`), digits = 3),
+            "standdev" = round(sd(PlayoffLeagueStats$`PCT(Win Rate)`), digits = 3))
 
 PlayoffLeagueStatsSummaryRS <- PlayoffLeagueStats  %>%
   summarize(count = n(),
-            "mean" = mean(PlayoffLeagueStats$`RS(Runs Scored)`),
-            "min" = min(PlayoffLeagueStats$`RS(Runs Scored)`),
-            "firstQuintile" = quantile(PlayoffLeagueStats$`RS(Runs Scored)`, .2),
-            "secondQuintile" = quantile(PlayoffLeagueStats$`RS(Runs Scored)`, .4),
-            "median" = median(PlayoffLeagueStats$`RS(Runs Scored)`),
-            "thirdQuintile" = quantile(PlayoffLeagueStats$`RS(Runs Scored)`, .6),
-            "fourthQuintile" = quantile(PlayoffLeagueStats$`RS(Runs Scored)`, .8),
-            "max" = max(PlayoffLeagueStats$`RS(Runs Scored)`),
-            "standdev" = sd(PlayoffLeagueStats$`RS(Runs Scored)`))
+            "type" = "Runs Scored",
+            "mean" = round(mean(PlayoffLeagueStats$`RS(Runs Scored)`), digits = 3),
+            "min" = round(min(PlayoffLeagueStats$`RS(Runs Scored)`), digits = 3),
+            "firstQuin" = round(quantile(PlayoffLeagueStats$`RS(Runs Scored)`, .2), digits = 0),
+            "secondQuin" = round(quantile(PlayoffLeagueStats$`RS(Runs Scored)`, .4), digits = 0),
+            "median" = round(median(PlayoffLeagueStats$`RS(Runs Scored)`), digits = 3),
+            "thirdQuin" = round(quantile(PlayoffLeagueStats$`RS(Runs Scored)`, .6), digits = 0),
+            "fourthQuin" = round(quantile(PlayoffLeagueStats$`RS(Runs Scored)`, .8), digits = 0),
+            "max" = round(max(PlayoffLeagueStats$`RS(Runs Scored)`), digits = 0),
+            "standdev" = round(sd(PlayoffLeagueStats$`RS(Runs Scored)`), digits = 3))
 
 PlayoffLeagueStatsSummaryRA <- PlayoffLeagueStats  %>%
   summarize(count = n(),
-            "mean" = mean(PlayoffLeagueStats$`RA(Runs Allowed)`),
-            "min" = min(PlayoffLeagueStats$`RA(Runs Allowed)`),
-            "firstQuintile" = quantile(PlayoffLeagueStats$`RA(Runs Allowed)`, .2),
-            "secondQuintile" = quantile(PlayoffLeagueStats$`RA(Runs Allowed)`, .4), 
-            "median" = median(PlayoffLeagueStats$`RA(Runs Allowed)`),
-            "thirdQuintile" = quantile(PlayoffLeagueStats$`RA(Runs Allowed)`, .6),
-            "fourthQuintile" = quantile(PlayoffLeagueStats$`RA(Runs Allowed)`, .8),
-            "max" = max(PlayoffLeagueStats$`RA(Runs Allowed)`),
-            "standdev" = sd(PlayoffLeagueStats$`RA(Runs Allowed)`))
+            "type" = "Runs Allowed",
+            "mean" = round(mean(PlayoffLeagueStats$`RA(Runs Allowed)`), digits = 3),
+            "min" = round(min(PlayoffLeagueStats$`RA(Runs Allowed)`), digits = 0),
+            "firstQuin" = round(quantile(PlayoffLeagueStats$`RA(Runs Allowed)`, .2), digits = 0),
+            "secondQuin" = round(quantile(PlayoffLeagueStats$`RA(Runs Allowed)`, .4), digits = 0), 
+            "median" = round(median(PlayoffLeagueStats$`RA(Runs Allowed)`), digits = 0),
+            "thirdQuin" = round(quantile(PlayoffLeagueStats$`RA(Runs Allowed)`, .6), digits = 0),
+            "fourthQuin" = round(quantile(PlayoffLeagueStats$`RA(Runs Allowed)`, .8), digits = 0),
+            "max" = round(max(PlayoffLeagueStats$`RA(Runs Allowed)`), digits = 0),
+            "standdev" = round(sd(PlayoffLeagueStats$`RA(Runs Allowed)`), digits = 3))
 
 MergedPlayoff <- rbind(PlayoffLeagueStatsSummaryPCT, PlayoffLeagueStatsSummaryRS)
 MergedPlayoff <- rbind(MergedPlayoff, PlayoffLeagueStatsSummaryRA)
 kable(MergedPlayoff)
 ```
+
+The teams which made it to the playoffs are the 6 top teams from each league, and usually the teams skewing the data on the edges. Initially we can see a much less deviance from the win rates. these teams are more consistently clustered near .57 with the outliers being on the high end. Runs scored are also on average much higher, as expected, but cluster on the lower side due to teams like the Dodgers raising the maximum so high. Runs allowed is also much lower than its non playoff counterpart, but is more consistent with its value which have a range of 172 as opposed to non playoff's 205. As expected from taking the best teams into their own set, the data is much more of a higher consistent standard than when measured with a larger population.
 
 ```{r, echo = FALSE}
 #merge_table <- rbind(notplayoffTeamsSummary, PlayoffLeagueStatsSummary)
@@ -286,35 +296,47 @@ kable(MergedPlayoff)
 ## All League Teams chart
 
 ```{r}
-ggplot(data = AllTeamsStats, aes(x= as.numeric(AllTeamsStats[[2]]), y =as.numeric(AllTeamsStats[[3]]), color =AllTeamsStats[[1]], size =AllTeamsStats[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored")+ ggtitle("AllTeams Win Rate per Runs scored)") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
+ggplot(data = AllTeamsStats, aes(x= as.numeric(AllTeamsStats[[2]]), y =as.numeric(AllTeamsStats[[3]]), color =AllTeamsStats[[1]], size =AllTeamsStats[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored)")+ ggtitle("All Teams (Win Rate per Runs Scored)") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
 ```
+
+As can be observed by the general trend of the graph, throughout the entire league there is a distinct linear correlation between runs scored and the win rate of a team. The data present can be fitted nicely to a best fit line, which insinuates that the runs scored could be used to find a slope that dictates the graph as a whole within a margin of error. A general trend can also be observed between win rate and runs allowed, or the size of each point. As a team's win rate increases it quite consistently also sees a decrease in runs allowed, but this is not the case between runs scored and runs allowed. There are multiple instances of two teams having the same win rate where the team with more has also more runs allowed. From this we can infer that the relationship between runs scored and allowed is an inverse linear relationship where the difference between them indicates the win rate of a team.
 
 ## National League Teams chart
 
 ```{r}
-ggplot(data = NationalLeagueTeams, aes(x= as.numeric(NationalLeagueTeams[[2]]), y =as.numeric(NationalLeagueTeams[[3]]), color =NationalLeagueTeams[[1]], size =NationalLeagueTeams[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored)")+ ggtitle("National League Teams Win Rate per Runs scored") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
+ggplot(data = NationalLeagueTeams, aes(x= as.numeric(NationalLeagueTeams[[2]]), y =as.numeric(NationalLeagueTeams[[3]]), color =NationalLeagueTeams[[1]], size =NationalLeagueTeams[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored)")+ ggtitle("National League Teams (Win Rate per Runs Scored)") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
 ```
+
+Here can be seen the most obvious example of the linearity that exists between win rate and run scored. While there are some outliers and gaps, the trend reinforces the hypothesis and observations made about the league wide statistics.
 
 ## American League Teams chart
 
 ```{r}
-ggplot(data = AmericanLeagueTeams, aes(x= as.numeric(AmericanLeagueTeams[[2]]), y =as.numeric(AmericanLeagueTeams[[3]]), color =AmericanLeagueTeams[[1]], size =AmericanLeagueTeams[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored)")+ ggtitle("American League Teams Win Rate per Runs scored") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
+ggplot(data = AmericanLeagueTeams, aes(x= as.numeric(AmericanLeagueTeams[[2]]), y =as.numeric(AmericanLeagueTeams[[3]]), color =AmericanLeagueTeams[[1]], size =AmericanLeagueTeams[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored)")+ ggtitle("American League Teams (Win Rate per Runs Scored)") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
 ```
+
+While this graph doesn't appear to be as linear as the others, it serves to corroborate the observations made regarding the runs allowed. For the points excluding the top fringe case, runs allowed is dictated be the win rate of a team and its runs scored. This shows the negation of these two statistics upon each other, where a team which tends to have higher scoring, close, games and a team with lower scoring, close, games will have similar win rates and blowout games have much less of an effect than presumed.
 
 ## Play off League Teams chart
 
 ```{r}
-ggplot(data = PlayoffLeagueStats, aes(x= as.numeric(PlayoffLeagueStats[[2]]), y =as.numeric(PlayoffLeagueStats[[3]]), color =PlayoffLeagueStats[[1]], size =PlayoffLeagueStats[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored)")+ ggtitle("American League Teams Win Rate per Runs scored") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
+ggplot(data = PlayoffLeagueStats, aes(x= as.numeric(PlayoffLeagueStats[[2]]), y =as.numeric(PlayoffLeagueStats[[3]]), color =PlayoffLeagueStats[[1]], size =PlayoffLeagueStats[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored)")+ ggtitle("All Playoff Teams (Win Rate per Runs Scored)") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
 ```
+
+The playoff teams here are the top six teams taken from each league. This may lead to a slight skewing of the data near the top end, due to a greater number of games played, which is why we decided to evaluate them on their own as well. As can be seen from the world series results, the win rate and other statistics here do not have a great effect on their chances of winning. The two teams who made it to the finals were the Houston Astros, which were second in win rate as expected, and the Philadelphia Phillies, which were second last in win rate and a major upset. As the winner is decided by an elimination style bracket, the runs scored vs allowed is not a deciding factor but can be considered a loose indicator.
 
 ## National Play off Teams chart
 
 ```{r}
-ggplot(data = NationalPlayoffTeams, aes(x= as.numeric(NationalPlayoffTeams[[2]]), y =as.numeric(NationalPlayoffTeams[[3]]), color =NationalPlayoffTeams[[1]], size =NationalPlayoffTeams[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored)")+ ggtitle("American League Teams Win Rate per Runs scored") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
+ggplot(data = NationalPlayoffTeams, aes(x= as.numeric(NationalPlayoffTeams[[2]]), y =as.numeric(NationalPlayoffTeams[[3]]), color =NationalPlayoffTeams[[1]], size =NationalPlayoffTeams[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored)")+ ggtitle("National Playoff Teams (Win Rate per Runs Scored)") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
 ```
+
+The major outlier of this graph is the Los Angeles Dodgers who had a series of blowout games padding their statistics. Even compared to the American League, the Dodgers were an extreme fringe case which were favorites to win the world series, but in the end didn't make it.
 
 ## American Play off Teams chart
 
 ```{r}
-ggplot(data = AmericanPlayoffTeams, aes(x= as.numeric(AmericanPlayoffTeams[[2]]), y =as.numeric(AmericanPlayoffTeams[[3]]), color =AmericanPlayoffTeams[[1]], size =AmericanPlayoffTeams[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored)")+ ggtitle("American League Teams Win Rate per Runs scored") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
+ggplot(data = AmericanPlayoffTeams, aes(x= as.numeric(AmericanPlayoffTeams[[2]]), y =as.numeric(AmericanPlayoffTeams[[3]]), color =AmericanPlayoffTeams[[1]], size =AmericanPlayoffTeams[[4]])) + geom_point()  + xlab("PCT(Win Rate)")+ ylab("RS(Runs Scored)")+ ggtitle("American Playoff Teams (Win Rate per Runs Scored)") +labs(color = "Teams") + labs(size = "RA(Runs Allows)")
 ```
+
+While the highest win rate team here, the Houston Astros, did eventually win the world series, the New York Yankees had almost 75 more runs scored while only 50 more allowed. This disparity appeared to not have affected the overall score, where the lower scoring but more defensive Astros eventually won it all.
